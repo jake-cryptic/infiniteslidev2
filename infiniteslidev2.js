@@ -1,6 +1,6 @@
 /*
 infiniteslide.js v2
-version: 2.0.1
+version: 2.1.0-fork
 Author: T.Morimoto
 
 Copyright 2017, T.Morimoto
@@ -8,6 +8,9 @@ Copyright 2017, T.Morimoto
 * http://www.opensource.org/licenses/mit-license.php
 
 https://github.com/woodroots/infiniteslidev2
+
+Fork by jake-cryptic
+https://github.com/jake-cryptic/infiniteslidev2
 */
 
 (function($){
@@ -16,24 +19,23 @@ https://github.com/woodroots/infiniteslidev2
 	});
 	$(function(){
 		$.fn.infiniteslide = function(options){
-			//option
+			// Options
 			var settings = $.extend({
-				'speed': 100, //速さ　単位はpx/秒です。
-				'direction': 'left', //up/down/left/rightから選択
-				'pauseonhover': true, //マウスオーバーでストップ
-				'responsive': false, //子要素の幅を%で指定しているとき
+				'speed': 100,
+				'direction': 'left',
+				'pauseonhover': true,
+				'responsive': false,
 				'clone': 1
-			},options);
+			}, options);
 			
 			var setCss = function(obj,direction){
 				$(obj).wrap('<div class="infiniteslide_wrap"></div>').parent().css({
 					overflow: 'hidden'
 				});
 
+				let d = 'row';
 				if(direction == 'up' || direction == 'down'){
-					var d = 'column';
-				} else {
-					var d = 'row';
+					d = 'column';
 				}
 								
 				$(obj).css({
@@ -43,14 +45,14 @@ https://github.com/woodroots/infiniteslidev2
 					'-ms-flex-align': 'center',
 					flexDirection: d
 				}).children().css({
-						flex: 'none',
-						display: 'block'
-					});
+					flex: 'none',
+					display: 'block'
+				});
 			}
 			
 			var setClone = function(obj,clone){
-				var $clone = $(obj).children().clone(true).addClass('infiniteslide_clone');
-				i = 1;
+				let $clone = $(obj).children().clone(true).addClass('infiniteslide_clone');
+				let i = 1;
 				while(i <= clone){
 					$clone.clone(true).appendTo($(obj));
 					i++;
@@ -58,14 +60,14 @@ https://github.com/woodroots/infiniteslidev2
 			}
 			
 			var getWidth = function(obj){
-				w = 0;
+				let w = 0;
 				$(obj).children(':not(.infiniteslide_clone)').each(function(key,value){
 					w = w + $(this).outerWidth(true);
 				});
 				return w;
 			}
 			var getHeight = function(obj){
-				h = 0;
+				let h = 0;
 				$(obj).children(':not(.infiniteslide_clone)').each(function(key,value){
 					h = h + $(this).outerHeight(true);
 				});
@@ -77,46 +79,43 @@ https://github.com/woodroots/infiniteslidev2
 				return l / s;
 			}
 			var getNum = function(obj,direction){
+				let num = 0;
 				if(direction == 'up' || direction == 'down'){
-					var num = getHeight(obj);
+					num = getHeight(obj);
 				} else {
-					var num = getWidth(obj);
+					num = getWidth(obj);
 				}
 				return num;
 			}
 			
 			var getTranslate = function(num,direction){
-				if(direction == 'up' || direction == 'down'){
-					var i = '0,-' + num + 'px,0';
-				} else {
-					var i = '-' + num + 'px,0,0';
+				let i = '-' + num + 'px,0,0';
+				if(direction === 'up' || direction === 'down'){
+					i = '0,-' + num + 'px,0';
 				}
 				return i;
 			}
 			
 			var setAnim = function(obj,id,direction,speed){
-				var num = getNum(obj,direction);
+				let num = getNum(obj,direction);
 				if(direction == 'up' || direction == 'down'){
 					$(obj).parent('.infiniteslide_wrap').css({
 						height: num + 'px'
 					});
 				}
-				var i = getTranslate(num,direction);
+				let i = getTranslate(num,direction);
 				
 				$(obj).attr('data-style','infiniteslide' + id);
 
-				var css = '@keyframes infiniteslide' + id + '{' + 
+				let css = '@keyframes infiniteslide' + id + '{' + 
 								'from {transform:translate3d(0,0,0);}' + 
 								'to {transform:translate3d(' + i + ');}' + 
 							'}';
-				$('<style />').attr('id','infiniteslide' + id + '_style')
-				.html(css)
-				.appendTo('head');
+				$('<style />').attr('id','infiniteslide' + id + '_style').html(css).appendTo('head');
 				
-				if(direction == 'right' || direction == 'down'){
-					var reverse = ' reverse';
-				} else {
-					var reverse = '';
+				let reverse = '';
+				if(direction === 'right' || direction === 'down'){
+					reverse = ' reverse';
 				}
 				
 				$(obj).css({
@@ -136,20 +135,18 @@ https://github.com/woodroots/infiniteslidev2
 			}
 			
 			var setResponsive = function(obj,direction){
-					var num = getNum(obj,direction);
-					var i = getTranslate(num,direction);
-					return i;
-				};
-			
-			
-			
+				let num = getNum(obj,direction);
+				return getTranslate(num,direction);
+			};
 		
 			return this.each(function(key,value){
 				var $this = $(this);
-				var num = Date.now() + Math.floor(10000*Math.random()).toString(16);
+				let num = Date.now() + Math.floor(10000*Math.random()).toString(16);
+
 				if(settings.pauseonhover == true){
 					setStop($this);
 				}
+				
 				var _onload = function(){
 					setCss($this,settings.direction);
 					setClone($this,settings.clone);
@@ -157,13 +154,12 @@ https://github.com/woodroots/infiniteslidev2
 					
 					if(settings.responsive){
 						$(window).on('resize',function(){
-							var i = setResponsive($this,settings.direction);
-							var styleid = $this.attr('data-style');
-							var stylehtml = $('#' + styleid + '_style').html();
+							let i = setResponsive($this,settings.direction);
+							let styleid = $this.attr('data-style');
+							let stylehtml = $('#' + styleid + '_style').html();
 							
-							var stylehtml_new = stylehtml.replace(/to {transform:translate3d\((.*?)\)/,'to {transform:translate3d(' + i + ')');
+							let stylehtml_new = stylehtml.replace(/to {transform:translate3d\((.*?)\)/,'to {transform:translate3d(' + i + ')');
 							$('#' + styleid + '_style').html(stylehtml_new);
-
 						});
 					}
 				};
@@ -174,7 +170,7 @@ https://github.com/woodroots/infiniteslidev2
 					$(window).on('load', _onload);
 				}
 			});
-			
+
 		}
 	});
 })(jQuery);
