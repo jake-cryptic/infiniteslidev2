@@ -18,9 +18,9 @@ https://github.com/jake-cryptic/infiniteslidev2
 	    window.loaded = true;
 	});
 	$(function(){
-		$.fn.infiniteslide = function(options){
+		$.fn.infiniteslide = function(options) {
 			// Options
-			var settings = $.extend({
+			let settings = $.extend({
 				'speed': 100,
 				'direction': 'left',
 				'pauseonhover': true,
@@ -28,13 +28,13 @@ https://github.com/jake-cryptic/infiniteslidev2
 				'clone': 1
 			}, options);
 			
-			var setCss = function(obj,direction){
+			let setCss = function(obj,direction) {
 				$(obj).wrap('<div class="infiniteslide_wrap"></div>').parent().css({
 					overflow: 'hidden'
 				});
 
 				let d = 'row';
-				if(direction == 'up' || direction == 'down'){
+				if (direction == 'up' || direction == 'down'){
 					d = 'column';
 				}
 								
@@ -50,37 +50,36 @@ https://github.com/jake-cryptic/infiniteslidev2
 				});
 			}
 			
-			var setClone = function(obj,clone){
+			let setClone = function(obj,clone) {
 				let $clone = $(obj).children().clone(true).addClass('infiniteslide_clone');
 				let i = 1;
-				while(i <= clone){
+				while(i <= clone) {
 					$clone.clone(true).appendTo($(obj));
 					i++;
 				}
 			}
 			
-			var getWidth = function(obj){
+			let getWidth = function(obj) {
 				let w = 0;
-				$(obj).children(':not(.infiniteslide_clone)').each(function(key,value){
+				$(obj).children(':not(.infiniteslide_clone)').each(function(key,value) {
 					w = w + $(this).outerWidth(true);
 				});
 				return w;
 			}
-			var getHeight = function(obj){
+			let getHeight = function(obj) {
 				let h = 0;
-				$(obj).children(':not(.infiniteslide_clone)').each(function(key,value){
+				$(obj).children(':not(.infiniteslide_clone)').each(function(key,value) {
 					h = h + $(this).outerHeight(true);
 				});
 				return h;
 			}
-
 			
-			var getSpeed = function(l,s){
+			let getSpeed = function(l,s) {
 				return l / s;
 			}
-			var getNum = function(obj,direction){
+			let getNum = function(obj,direction){
 				let num = 0;
-				if(direction == 'up' || direction == 'down'){
+				if (direction == 'up' || direction == 'down') {
 					num = getHeight(obj);
 				} else {
 					num = getWidth(obj);
@@ -88,17 +87,17 @@ https://github.com/jake-cryptic/infiniteslidev2
 				return num;
 			}
 			
-			var getTranslate = function(num,direction){
+			let getTranslate = function(num,direction) {
 				let i = '-' + num + 'px,0,0';
-				if(direction === 'up' || direction === 'down'){
+				if (direction === 'up' || direction === 'down') {
 					i = '0,-' + num + 'px,0';
 				}
 				return i;
 			}
 			
-			var setAnim = function(obj,id,direction,speed){
+			let setAnim = function(obj,id,direction,speed) {
 				let num = getNum(obj,direction);
-				if(direction == 'up' || direction == 'down'){
+				if (direction == 'up' || direction == 'down') {
 					$(obj).parent('.infiniteslide_wrap').css({
 						height: num + 'px'
 					});
@@ -108,13 +107,13 @@ https://github.com/jake-cryptic/infiniteslidev2
 				$(obj).attr('data-style','infiniteslide' + id);
 
 				let css = '@keyframes infiniteslide' + id + '{' + 
-								'from {transform:translate3d(0,0,0);}' + 
-								'to {transform:translate3d(' + i + ');}' + 
-							'}';
+					'from {transform:translate3d(0,0,0);}' + 
+					'to {transform:translate3d(' + i + ');}' + 
+				'}';
 				$('<style />').attr('id','infiniteslide' + id + '_style').html(css).appendTo('head');
 				
 				let reverse = '';
-				if(direction === 'right' || direction === 'down'){
+				if (direction === 'right' || direction === 'down') {
 					reverse = ' reverse';
 				}
 				
@@ -122,38 +121,37 @@ https://github.com/jake-cryptic/infiniteslidev2
 					animation: 'infiniteslide' + id + ' ' + getSpeed(num,speed) + 's linear 0s infinite' + reverse
 				});
 			}
-			var setStop = function(obj){
-				$(obj).on('mouseenter',function(){
+			let setStop = function(obj) {
+				$(obj).on('mouseenter',function() {
 					$(this).css({
 						animationPlayState: 'paused'
 					});
-				}).on('mouseleave',function(){
+				}).on('mouseleave',function() {
 					$(this).css({
 						animationPlayState: 'running'
 					});
 				});
 			}
 			
-			var setResponsive = function(obj,direction){
-				let num = getNum(obj,direction);
-				return getTranslate(num,direction);
+			let setResponsive = function(obj,direction) {
+				return getTranslate(getNum(obj,direction), direction);
 			};
 		
-			return this.each(function(key,value){
-				var $this = $(this);
+			return this.each(function(key,value) {
+				let $this = $(this);
 				let num = Date.now() + Math.floor(10000*Math.random()).toString(16);
 
-				if(settings.pauseonhover == true){
+				if (settings.pauseonhover == true){
 					setStop($this);
 				}
 				
-				var _onload = function(){
+				let _onload = function() {
 					setCss($this,settings.direction);
 					setClone($this,settings.clone);
 					setAnim($this,num,settings.direction,settings.speed);
 					
-					if(settings.responsive){
-						$(window).on('resize',function(){
+					if (settings.responsive) {
+						$(window).on('resize',function() {
 							let i = setResponsive($this,settings.direction);
 							let styleid = $this.attr('data-style');
 							let stylehtml = $('#' + styleid + '_style').html();
@@ -170,7 +168,6 @@ https://github.com/jake-cryptic/infiniteslidev2
 					$(window).on('load', _onload);
 				}
 			});
-
 		}
 	});
 })(jQuery);
